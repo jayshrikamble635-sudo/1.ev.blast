@@ -14,7 +14,7 @@ import joblib
 st.title("EV Blast Prediction System")
 
 # Model Load
-model = joblib.load("model.pkl")   # apna model file name yaha likho
+model = joblib.load("dtc_model (1).pkl")   # apna model file name yaha likho
 
 st.subheader("Enter Vehicle Details")
 
