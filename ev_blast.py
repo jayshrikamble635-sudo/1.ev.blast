@@ -24,7 +24,7 @@ if st.button("Predict"):
         "current": [current],
         "charging_cycles": [charging_cycles]
     })
-
+input_data.columns = model.feature_names_in_
     prediction = model.predict(input_data)
 
     if prediction[0] == 1:
