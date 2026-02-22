@@ -10,12 +10,12 @@ Original file is located at
 # First install required libraries:
 # pip install gradio joblib pandas
 
-import gradio as gr
+import stremlit as st
 import joblib
 import pandas as pd
 
 # Load trained model
-model = joblib.load("dtc_model.pkl")
+model = joblib.load("dtc_model (1).pkl")
 
 # Prediction function
 def predict_wine(fixed_acidity, volatile_acidity, citric_acid, residual_sugar,
