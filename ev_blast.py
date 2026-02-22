@@ -10,7 +10,7 @@ Original file is located at
 # First install required libraries:
 # pip install gradio joblib pandas
 
-import stremlit as st
+import streamlit as st
 import joblib
 import pandas as pd
 
