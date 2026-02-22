@@ -1,30 +1,30 @@
-
-
 import streamlit as st
 import pandas as pd
 import joblib
 
 st.title("EV Blast Prediction System")
 
-# Model Load
-model = joblib.load("dtc_model (1).pkl")   # apna model file name yaha likho
+# Load trained model
+model = joblib.load("dtc_model (1).pkl")
 
 st.subheader("Enter Vehicle Details")
 
-battery_temp = st.number_input("Battery Temperature", min_value=0.0)
-voltage = st.number_input("Voltage", min_value=0.0)
-current = st.number_input("Current", min_value=0.0)
-charging_cycles = st.number_input("Charging Cycles", min_value=0)
-input_data = pd.DataFrame({
-        "battery_temp": [battery_temp],
-        "voltage": [voltage],
-        "current": [current],
-        "charging_cycles": [charging_cycles]
-    })
-input_data.columns = model.feature_names_in_
+# Automatically create inputs based on model features
+input_data = {}
+
+for feature in model.feature_names_in_:
+    input_data[feature] = st.number_input(feature, value=0.0)
+
 if st.button("Predict"):
-    prediction = model.predict(input_data)
-    if prediction[0] == 1:
-        st.error("High Risk of EV Blast")
-    else:
-        st.success("EV is Safe")
+    try:
+        df = pd.DataFrame([input_data])
+        prediction = model.predict(df)
+
+        if prediction[0] == 1:
+            st.error("High Risk of EV Blast")
+        else:
+            st.success("EV is Safe")
+
+    except Exception as e:
+        st.error("Something went wrong")
+        st.write(e)
