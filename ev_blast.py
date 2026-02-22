@@ -7,68 +7,34 @@ Original file is located at
     https://colab.research.google.com/drive/1xwmJI62b-ychu0uP1WoShDE-B-KuAn7-
 """
 
-# First install required libraries:
-# pip install gradio joblib pandas
-
 import streamlit as st
-import joblib
 import pandas as pd
+import joblib
 
-# Load trained model
-model = joblib.load("dtc_model (1).pkl")
+st.title("EV Blast Prediction System")
 
-# Prediction function
-def predict_wine(fixed_acidity, volatile_acidity, citric_acid, residual_sugar,
-                 chlorides, free_sulfur_dioxide, total_sulfur_dioxide,
-                 density, pH, sulphates, alcohol, quality):
+# Model Load
+model = joblib.load("model.pkl")   # apna model file name yaha likho
 
-    try:
-        input_data = pd.DataFrame({
-            "fixed_acidity": [fixed_acidity],
-            "volatile_acidity": [volatile_acidity],
-            "citric_acid": [citric_acid],
-            "residual_sugar": [residual_sugar],
-            "chlorides": [chlorides],
-            "free_sulfur_dioxide": [free_sulfur_dioxide],
-            "total_sulfur_dioxide": [total_sulfur_dioxide],
-            "density": [density],
-            "pH": [pH],
-            "sulphates": [sulphates],
-            "alcohol": [alcohol],
-            "quality": [quality]
-        })
+st.subheader("Enter Vehicle Details")
 
-        prediction = model.predict(input_data)[0]
+battery_temp = st.number_input("Battery Temperature", min_value=0.0)
+voltage = st.number_input("Voltage", min_value=0.0)
+current = st.number_input("Current", min_value=0.0)
+charging_cycles = st.number_input("Charging Cycles", min_value=0)
 
-        if prediction == "white":
-            return "White Wine"
-        else:
-            return "Red Wine"
+if st.button("Predict"):
 
-    except Exception as e:
-        return f"Error: {str(e)}"
+    input_data = pd.DataFrame({
+        "battery_temp": [battery_temp],
+        "voltage": [voltage],
+        "current": [current],
+        "charging_cycles": [charging_cycles]
+    })
 
-# Create Gradio interface
-interface = gr.Interface(
-    fn=predict_wine,
-    inputs=[
-        gr.Number(label="fixed_acidity"),
-        gr.Number(label="volatile_acidity"),
-        gr.Number(label="citric_acid"),
-        gr.Number(label="residual_sugar"),
-        gr.Number(label="chlorides"),
-        gr.Number(label="free_sulfur_dioxide"),
-        gr.Number(label="total_sulfur_dioxide"),
-        gr.Number(label="density"),
-        gr.Number(label="pH"),
-        gr.Number(label="sulphates"),
-        gr.Number(label="alcohol"),
-        gr.Number(label="quality"),
-    ],
-    outputs=gr.Textbox(label="Prediction"),
-    title="Wine Type Prediction"
-)
+    prediction = model.predict(input_data)
 
-# Launch app
-if __name__ == "__main__":
-    interface.launch()
+    if prediction[0] == 1:
+        st.error("High Risk of EV Blast")
+    else:
+        st.success("EV is Safe")
